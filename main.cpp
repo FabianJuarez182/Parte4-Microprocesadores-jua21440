@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 using namespace std;
+//Creacion de variables que se utilizaran de manera global
 void *subtotal1(void *ptr);
 void *subtotal2(void *ptr);
 int vector[] = {1,2,3,4,10,9,80,70,19,20};
@@ -27,42 +28,27 @@ int mitad_vector = vector_completo/2;
 
 int main()
 {
-    int arr[mitad_vector];
-    int arr2[mitad_vector];
-    int contador = 0;
-     for (int i = 0; i < vector_completo; i++){
-         if(i<mitad_vector){
-            arr[i] = vector[i];
-         }
-         else{
-            arr2[contador] = vector[i];
-            contador++;
-         }
-     }
-     
-     
+    // Declaramos las variables tipo pthread_t
      pthread_t thread1, thread2;
      char const *message1 = "Thread 1";
      char const *message2 = "Thread 2";
     // Se crean los hilos de manera independiente el cual ejecutara la misma funcion
      pthread_create( &thread1, NULL, subtotal1, (void*) message1);
      pthread_create( &thread2, NULL, subtotal2, (void*) message2);
-
-     /* Wait till threads are complete before main continues. Unless we  */
-     /* wait we run the risk of executing an exit which will terminate   */
-     /* the process and all threads before the threads have completed.   */
-
+    // Esperar a que cada thread termine en orden
      pthread_join( thread1, NULL);
      pthread_join( thread2, NULL); 
      exit(0);
 }
-
+// Funcion para el primer thread el cual se encarga de recorrer el array e 
+// imprimir sus valores que posee cada espacio del array y al final sumarlos
 void *subtotal1(void *ptr){
     char *message;
     message = (char *) ptr;
     printf("%s \n",message);
     int arr[mitad_vector];
     int total1;
+//Ciclo para recorrer el array y realizar la impresion de cada dato
     for (int i = 0; i < mitad_vector; i++){
         arr[i] = vector[i];
         printf("numero dentro del arreglo del thread1: %d\n", arr[i]);
@@ -71,7 +57,8 @@ void *subtotal1(void *ptr){
     printf("El total del thread1 es de: %d\n\n", total1);
     return 0;
 }
-    
+// Funcion para el segundo thread el cual se encarga de recorrer el array e 
+// imprimir sus valores que posee cada espacio del array y al final sumarlos 
 void *subtotal2(void *ptr){
     char *message;
     message = (char *) ptr;
@@ -79,6 +66,7 @@ void *subtotal2(void *ptr){
     int arr2[mitad_vector];
     int contador = 0;
     int total2;
+    //Ciclo para recorrer el array y realizar la impresion de cada dato
     for (int i = mitad_vector; i < vector_completo; i++){
         arr2[contador] = vector[i];
         printf("numero dentro del arreglo del thread2: %d\n", arr2[contador]);
