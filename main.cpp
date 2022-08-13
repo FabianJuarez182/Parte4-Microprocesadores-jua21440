@@ -1,0 +1,79 @@
+/*
+*------------------------------------------
+* Parte 4 Laboratorio 2.cpp
+* -----------------------------------------
+* UNIVERSIDAD DEL VALLE DE GUATEMALA
+* FACULTAD DE INGENIERÍA
+* DEPARTAMENTO DE CIENCIA DE LA COMPUTACIÓN
+* CC3086 - Programacion de Microprocesadores
+* Fabian Juárez 21440
+*------------------------------------------
+* Descripción: Crear 2 hilos posix realizando
+* el cálculo para que cada uno recorra la
+* mitad del array y que sume los valores
+* que encuentre.
+*------------------------------------------
+*/ 
+#include <pthread.h>
+using namespace std;
+void *print_subtotal_total_1();
+void *print_subtotal_total_2();
+int vector[] = {1,2,3,4,10,9,80,70,19,20};
+int vector_completo = sizeof vector/sizeof vector[0];
+int mitad_vector = vector_completo/2;
+
+int main()
+{
+    int arr[mitad_vector];
+    int arr2[mitad_vector];
+    int contador = 0;
+     for (int i = 0; i < vector_completo; i++){
+         if(i<mitad_vector){
+            arr[i] = vector[i];
+         }
+         else{
+            arr2[contador] = vector[i];
+            contador++;
+         }
+     }
+     
+     
+     pthread_t thread1, thread2;
+
+    // Se crean los hilos de manera independiente el cual ejecutara la misma funcion
+     pthread_create( &thread1, NULL, subtotal1, NULL);
+     pthread_create( &thread2, NULL, subtotal2, NULL);
+
+     /* Wait till threads are complete before main continues. Unless we  */
+     /* wait we run the risk of executing an exit which will terminate   */
+     /* the process and all threads before the threads have completed.   */
+
+     pthread_join( thread1, NULL);
+     pthread_join( thread2, NULL); 
+     exit(0);
+}
+
+void *subtotal1(){
+    int arr[mitad_vector];
+    int total1;
+    for (int i = 0; i < mitad_vector; i++){
+        arr[i] = vector[i];
+        printf("numero dentro del arreglo del thread1: %d\n", arr[i]);
+        total1 = total1 + arr[i];
+    }
+    printf("El total del thread1 es de: %d\n", total1);
+
+}
+    
+void *subtotal2(){
+    int arr2[mitad_vector];
+    int contador = 0;
+    int total2;
+    for (int i = mitad_vector; i < vector_completo; i++){
+        arr2[contador] = vector[i];
+        printf("numero dentro del arreglo del thread2: %d\n", arr2[contador]);
+        total2 = total2 + arr[i];
+        contador++;
+    }
+    printf("El total del thread2 es de: %d\n", total2);
+}
